@@ -34,7 +34,5 @@ def web_search(query: str):
     return final_results
 
 
-if __name__ == "__main__":
-    mcp.run(
-        transport="streamable-http"
-    )
+# Create ASGI app for deployment
+app = mcp.streamable_http_app()
