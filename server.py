@@ -34,23 +34,18 @@ async def test(request: Request):
             "message": "Custom route working",
         }
     )
-@mcp.custom_route("/search", methods=["GET"])
-async def search_route(request: Request):
-    query = request.query_params.get("query")
-
-    if not query:
-        return JSONResponse(
-            {"error": "query parameter is required"},
-            status_code=400,
-        )
-
-    print(f"SEARCH CALLED: {query}")
+@mcp.tool()
+def web_search(query: str):
+    """
+    Search the web and return content from top results.
+    """
 
     search_results = search_web(query)
 
     final_results = []
 
     for result in search_results[:3]:
+
         url = result.get("href")
 
         content = fetch_page_content(url)
@@ -64,7 +59,8 @@ async def search_route(request: Request):
             }
         )
 
-    return JSONResponse(final_results)
+    return final_results
+
 
 
 if __name__ == "__main__":
@@ -72,6 +68,6 @@ if __name__ == "__main__":
 
     mcp.run(
         transport="http",
-        host="0.0.0.0",
+        host="127.0.0.1",
         port=port,
     )
